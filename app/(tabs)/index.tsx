@@ -1,70 +1,133 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  StatusBar,
+  SafeAreaView,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  Pressable,
+} from "react-native";
+import { useRouter } from "expo-router";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const data = [
+  {
+    id: "1",
+    title: "HURUF & ANGKA",
+    path: "/huruf",
+    imageThumbnail: require("./../../assets/images/abc.png"),
+  },
+  {
+    id: "2",
+    title: "KATA ISYARAT",
+    path: "/kata",
+    imageThumbnail: require("./../../assets/images/kataisyarat.png"),
+  },
+  {
+    id: "3",
+    title: "TEBAK KATA",
+    path: "/tebak",
+    imageThumbnail: require("./../../assets/images/tebakkata.png"),
+  },
+  {
+    id: "4",
+    title: "LATIHAN",
+    path: "/latihan",
+    imageThumbnail: require("./../../assets/images/latihan.png"),
+  },
+];
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const screenWidth = Dimensions.get("window").width;
+  const numColumns = 2; // Tentukan jumlah kolom yang diinginkan
+  const renderItem = ({ item }: any) => (
+    <TouchableOpacity
+      onPress={() =>
+        router.push({
+          pathname: item.path,
+          params: { title: item.title },
+        })
+      }
+      style={{
+        margin: 6,
+        width: screenWidth / numColumns - 20,
+      }}
+    >
+      <View style={styles.item}>
+        <Image style={styles.logoMenu} source={item.imageThumbnail} />
+        <Text style={styles.text}>{item.title}</Text>
+      </View>
+    </TouchableOpacity>
+  );
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
+    <SafeAreaView style={styles.container}>
+      <View
+        style={{
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 24,
+          paddingTop: 24,
+        }}
+      >
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          style={styles.tinyLogo}
+          source={require("./../../assets/images/dashboard.png")}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Text style={styles.textLogo}>Isyarat Pintar</Text>
+      </View>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={numColumns} // Menetapkan 2 kolom
+        style={styles.row}
+        columnWrapperStyle={{ justifyContent: "flex-start" }}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight, // Padding manual berdasarkan tinggi status bar
+    backgroundColor: "#f8f8f8",
+
+    alignItems: "center",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  row: {},
+  item: {
+    backgroundColor: "#4CAF",
+    paddingVertical: 24,
+    borderRadius: 8,
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  text: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "400",
+  },
+  tinyLogo: {
+    width: 280,
+    height: 100,
+    objectFit: "contain",
+  },
+  logoMenu: {
+    width: 210,
+    height: 120,
+    marginBottom: 12,
+    // resizeMode: "contain",
+    objectFit: "contain",
+  },
+  textLogo: {
+    fontSize: 28,
+    fontWeight: "500",
   },
 });
